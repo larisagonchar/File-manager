@@ -1,7 +1,8 @@
+import { join } from 'path';
 import { cwd } from 'process';
 
 export class Helper {
     static GetFullPath(pathToFile) {
-        return cwd() + '\\' + pathToFile;
+        return join(cwd(), pathToFile);
     }
 }

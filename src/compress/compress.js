@@ -14,7 +14,7 @@ class Compress {
         await this.makeAction(gunzip, pathToFile, pathToDestination);
     }
 
-    async makeAction(action, pathToFile, pathToDestination) {// when fail create file
+    async makeAction(action, pathToFile, pathToDestination) {
         return new Promise(async (resolve) => {
             const readStream = createReadStream(Helper.GetFullPath(pathToFile));
             

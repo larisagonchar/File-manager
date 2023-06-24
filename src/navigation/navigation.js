@@ -1,26 +1,33 @@
 import { readdir } from 'fs/promises';
-import { resolve, sep } from 'path';
+import { join, resolve, sep } from 'path';
 import { chdir, cwd } from 'process';
+import { Helper } from '../helpers/helper.js';
 
 class Navigation {
-    currentDirectory = '';
 
     async printListOfFiles() {
         try {
-            const data = await readdir(this.currentDirectory);
-            const tableData = data.map((item) => {
-                if (item.includes('.')) {//another condition
-                    return {
-                        name: item,
+            const files = await readdir(cwd(), {
+                withFileTypes: true
+            });
+
+            const tableData = [];
+
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].isFile()) {
+                    tableData.push({
+                        name: files[i].name,
                         type: 'file'
-                    }
+                    });
                 } else {
-                    return {
-                        name: item,
+                    tableData.push({
+                        name: files[i].name,
                         type: 'directory'
-                    }
+                    });
                 }
-            }).sort((a, b) => a.type.localeCompare(b.type));
+            }
+
+            tableData.sort((a, b) => a.type.localeCompare(b.type));
     
             console.table(tableData);
         } catch {
@@ -29,30 +36,25 @@ class Navigation {
     }
 
     async navigateToDirectory(pathToDirectory) {
-        const newPath = resolve(this.currentDirectory, pathToDirectory);
+        const newPath = resolve(cwd(), pathToDirectory);
 
         try {
-            chdir(newPath);
-            this.currentDirectory = cwd();
+            this.setCurrrentDirectory(newPath);
         } catch {
             console.log('Operation failed');
         }
     }
 
     navigateToUpperDirectory() {
-        const directories = this.currentDirectory.split(sep);
-        if (directories.length !== 1) {
-            directories.pop();
-            this.currentDirectory = resolve(...directories);
-        }
+        this.navigateToDirectory('..');
     }
 
     printCurrentDirectory() {
-        console.log(`\nYou are currently in ${this.currentDirectory}\n`);
+        console.log(`\nYou are currently in ${cwd()}\n`);
     }
 
     setCurrrentDirectory(currentDirectory) {
-        this.currentDirectory = currentDirectory;
+        chdir(currentDirectory);
     }
 }
 
