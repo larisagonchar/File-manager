@@ -5,7 +5,7 @@
   "scripts": {
     "start:dev": "nodemon src/app.ts",
     "start:prod": "tsc && node ./dist/app.js",
-    "lint": "npx eslint --ext .js,.ts .",
+    "lint": "npx eslint --ext .ts .",
     "test": "jest"
   },
   "dependencies": {
