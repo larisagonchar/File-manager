@@ -3,27 +3,28 @@ import { v4, validate } from 'uuid';
 import { users } from '../data/user';
 import { writeResponse } from '../helpers/helper';
 import { User } from '../models/user.model';
+import { ErrorMessages, StatusCode } from '../constants/error-messages';
 
 function getUsers(response: ServerResponse, id: string) {
 	if (id) {
 		if (validate(id)) {
 			const user = users.find(user => user.id === id);
 			if (user) {
-				writeResponse(user, 200, response);
+				writeResponse(user, StatusCode.OK, response);
 			} else {
-				writeResponse('User with such id doesn\'t exist', 404, response);
+				writeResponse(ErrorMessages.NO_USER_WITH_ID, StatusCode.NO_FOUND, response);
 			}
 		} else {
-			writeResponse(`${id} isn't valid id`, 400, response);
+			writeResponse(id + ErrorMessages.INVALID_ID, StatusCode.BAD_REQUEST, response);
 		}
 	} else {
-		writeResponse(users, 200, response);
+		writeResponse(users, StatusCode.OK, response);
 	}
 }
 
 function createUser(response: ServerResponse, id: string, body: User) {
 	if(id) {
-		writeResponse('This endpoint doesn\'t exist', 404, response);
+		writeResponse(ErrorMessages.ENDPOINT_NOT_EXIST, StatusCode.NO_FOUND, response);
 	} else if (body.age && body.username && body.hobbies) {
 		const newUser = {
 			id: v4(),
@@ -32,9 +33,9 @@ function createUser(response: ServerResponse, id: string, body: User) {
 
 		users.push(newUser);
 
-		writeResponse(newUser, 201, response);
+		writeResponse(newUser, StatusCode.CREATED, response);
 	} else {
-		writeResponse('Add all required fields: username, age, hobbies', 400, response);
+		writeResponse(ErrorMessages.REQUIRED_FIELDS, StatusCode.BAD_REQUEST, response);
 	}
 }
 
@@ -53,15 +54,15 @@ function updateUser(response: ServerResponse, id: string, body: User) {
 
 				users[index] = updatedUser;
 
-				writeResponse(updatedUser, 200, response);
+				writeResponse(updatedUser, StatusCode.OK, response);
 			} else {
-				writeResponse('Empty body', 400, response);
+				writeResponse(ErrorMessages.EMPTY_BODY, StatusCode.BAD_REQUEST, response);
 			}
 		} else {
-			writeResponse('User with such id doesn\'t exist', 404, response);
+			writeResponse(ErrorMessages.NO_USER_WITH_ID, StatusCode.NO_FOUND, response);
 		}
 	} else {
-		writeResponse(`${id} isn't valid id`, 400, response);
+		writeResponse(id + ErrorMessages.INVALID_ID, StatusCode.BAD_REQUEST, response);
 	}
 }
 
@@ -71,12 +72,12 @@ function deleteUser(response: ServerResponse, id: string) {
 
 		if (index !== -1) {
 			users.splice(index, 1);
-			response.statusCode = 204;
+			response.statusCode = StatusCode.NO_CONTENT;
 		} else {
-			writeResponse('User with such id doesn\'t exist', 404, response);
+			writeResponse(ErrorMessages.NO_USER_WITH_ID, StatusCode.NO_FOUND, response);
 		}
 	} else {
-		writeResponse(`${id} isn't valid id`, 400, response);
+		writeResponse(id + ErrorMessages.INVALID_ID, StatusCode.BAD_REQUEST, response);
 	}
 }
 

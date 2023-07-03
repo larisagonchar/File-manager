@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { getBody, writeResponse } from '../helpers/helper';
 import { METHODS } from '../constants/methods';
 import { User } from '../models/user.model';
+import { ErrorMessages, StatusCode } from '../constants/error-messages';
 
 export const serverHandler = async (request: IncomingMessage, response: ServerResponse) => {
 	try {
@@ -9,7 +10,7 @@ export const serverHandler = async (request: IncomingMessage, response: ServerRe
 		url.shift();
 
 		if (url[0] !== 'api' || url[1] !== 'users' || url[3]) {
-			writeResponse('This endpoint doesn\'t exist', 404, response);
+			writeResponse(ErrorMessages.ENDPOINT_NOT_EXIST, StatusCode.NO_FOUND, response);
 			return;
 		}
 
@@ -19,6 +20,6 @@ export const serverHandler = async (request: IncomingMessage, response: ServerRe
 		const makeAction = METHODS[method];
 		makeAction(response, id, body);
 	} catch {
-		writeResponse('Internal server error', 500, response);
+		writeResponse(ErrorMessages.INTERNAL_SERVER_ERROR, StatusCode.INTERNAL_SERVER_ERROR, response);
 	}
 };
