@@ -5,7 +5,7 @@ import { ActionType, AttackStatus } from "./constants/constants";
 import { getUserAfterRegistration } from "./controllers/user";
 import { addUserToRoom, createRoom, deleteRoom, getUpdatedRooms } from "./controllers/room";
 import { getUpdatedWinners, setWinner } from "./controllers/winner";
-import { sendDataToAllPlayers, sendDataToPlayers } from "./controllers/client";
+import { deleteClient, sendDataToAllPlayers, sendDataToPlayers } from "./controllers/client";
 import { createGame, deleteGame, getCreatedGame, getFinishedGame, getStartedGame, isGameOver, isUsersReadyToStartGame } from "./controllers/game";
 import { addShips } from "./controllers/ships";
 import { AttackModel, ShipForClientModel } from "./models/game.model";
@@ -23,6 +23,12 @@ const websocket = new WebSocketServer({
 
 websocket.on('connection', (socket: WebSocket) => {
     console.log('connected to websocket');
+
+    socket.on('close', () => {
+        console.log('close websocket connection for client');
+        deleteClient(socket);
+        socket.close();
+    });
 
     socket.on('message', (data) => {
 

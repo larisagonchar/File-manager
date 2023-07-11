@@ -20,7 +20,7 @@ export function setClient(socket: WebSocket): void {
     }
 }
 
-export function sendDataToPlayers(data: any, gameId: string) {
+export function sendDataToPlayers(data: any, gameId: string): void {
     const game = getGameById(gameId);
     const usersIds = game.users.map(user => user.index);
 
@@ -35,4 +35,8 @@ export function sendDataToAllPlayers(data: any): void {
     clients.forEach((_, socket) => {
         socket.send(data);
     });
+}
+
+export function deleteClient(socket: WebSocket): void {
+    clients.delete(socket);
 }
