@@ -19,19 +19,38 @@ export function getUserAfterRegistration(message: Message, socket: WebSocket): s
 
     const userId = getClientId(socket);
 
-    setUser(userInfo, userId);
+    const isValid = isPasswordValid(userInfo.password);
     
     const user: Message = {
         type: ActionType.REG,
         data: JSON.stringify({
             name: userInfo.name,
             index: userId,
-            error: false
+            error: !isValid,
+            errorText: !isValid ? 'Password must contain: lower letter, capital letter, at list 1 number' : null
         }),
         id: 0
     };
 
+    if (isValid) setUser(userInfo, userId);
+
     return JSON.stringify(user);
+}
+
+function isPasswordValid(password: string): boolean {
+    let isPasswordContainNumber = false;
+    let isPasswordContainCapitalLetter = false;
+    let isPasswordContainLowerLetter = false;
+
+    const characters = password.split('');
+
+    characters.forEach(character => {
+        if (!isNaN(+character)) isPasswordContainNumber = true;
+        else if (character === character.toUpperCase()) isPasswordContainCapitalLetter = true;
+        else if (character === character.toLowerCase()) isPasswordContainLowerLetter = true;
+    });
+
+    return isPasswordContainCapitalLetter && isPasswordContainLowerLetter && isPasswordContainNumber;
 }
 
 function setUser(userInfo: { name: string; password: string; }, userId: string): void {

@@ -105,15 +105,15 @@ function getMissedPositions(killedPositions: ShipPositionModel[]): PositionModel
                     missedPositions.push(
                         {
                             x: killedPositions[i].x - 1,
-                            y: killedPositions[i].y
+                            y: killedPositions[i].y - 1
                         },
                         {
                             x: killedPositions[i].x,
-                            y: killedPositions[i].y
+                            y: killedPositions[i].y - 1
                         },
                         {
                             x: killedPositions[i].x + 1,
-                            y: killedPositions[i].y
+                            y: killedPositions[i].y - 1
                         }
                     );
                 }
